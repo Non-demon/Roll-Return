@@ -71,7 +71,7 @@ def cut_date(Strat_Date, End_Date, Future_Id_lst, sort_span = 60, holding_span =
 
 
 # 这个函数的目的在于想要读取future_id在信号计算日期上的展期收益率
-def func_1(future_id, date_Info):
+def calc_roll_return(future_id, date_Info):
     path_domi = ".\Data\DOMI\\" + future_id + ".csv"
     path_sec = ".\Data\SEC\\" + future_id + ".csv"
 
@@ -148,13 +148,13 @@ def func_1(future_id, date_Info):
     return res, Trade_info
 
 
-def func_2(Future_Id_lst, Date, dict_date_divide, cash = 1000000, trade_num = 0):
+def calc_spec_trading_date(Future_Id_lst, Date, dict_date_divide, cash = 1000000, trade_num = 0):
     # 返回holding期间的cash序列，以及下一个周期调仓之后的cash
     Rr_lst = []
     Info_future_lst = []
 
     for future_id in Future_Id_lst:
-        Rr_future_id, Info_future_id = func_1(future_id, dict_date_divide[Date])
+        Rr_future_id, Info_future_id = calc_roll_return(future_id, dict_date_divide[Date])
         Rr_lst.append(Rr_future_id)
         Info_future_lst.append(Info_future_id)
 
@@ -349,15 +349,14 @@ def func_2(Future_Id_lst, Date, dict_date_divide, cash = 1000000, trade_num = 0)
     return df_final, cash_sum[-1], trade_num
 
 
-def func_3(Future_Id_lst, dict_date_divide, cash = 1000000, trade_num = 0):
+def calc_spec_hold_and_sort(Future_Id_lst, dict_date_divide, cash = 1000000, trade_num = 0):
     df_final_all = []
     for key_date in dict_date_divide.keys():
         # key: trading_date
         # value: [start_date_i, calculate_date_i, trading_date_i, end_date_i]
         # 计算交易信号的那一天
         # print("{}已完成".format(str(key_date)))
-        print(key_date, dict_date_divide[key_date])
-        df_final, cash, trade_num = func_2(Future_Id_lst, key_date, dict_date_divide, cash, trade_num)
+        df_final, cash, trade_num = calc_spec_trading_date(Future_Id_lst, key_date, dict_date_divide, cash, trade_num)
         df_final_all.append(df_final)
 
     df_res = pd.concat(df_final_all, axis = 0)
@@ -447,9 +446,9 @@ if __name__ == "__main__":
             # [start_date_i, calculate_date_i, trading_date_i, end_date_i]
             dict_date_divide = cut_date(Strat_Date, End_Date, Future_Id_lst, sort_span = sort_i, holding_span = hold_i)
             # 用于获取在某个截面(中间那个日期，trading_date)上某个品种的平均展期收益率
-            # res, c = func_1("PP", dict_date_divide["2015-08-05"] )
-            # df = func_2(Future_Id_lst, "2015-08-05", dict_date_divide)
-            df_res, trade_num = func_3(Future_Id_lst, dict_date_divide, cash = 1000000, trade_num = 0)
+            # res, c = calc_roll_return("PP", dict_date_divide["2015-08-05"] )
+            # df = calc_spec_trading_date(Future_Id_lst, "2015-08-05", dict_date_divide)
+            df_res, trade_num = calc_spec_hold_and_sort(Future_Id_lst, dict_date_divide, cash = 1000000, trade_num = 0)
             df_res.to_csv("example.csv")
             revenue_ratio, sharp_ratio, Std, Max_drop = measure(df_res)
             plot(df_res)
