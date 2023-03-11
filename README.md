@@ -23,3 +23,20 @@ python contract_devision.py
 python Strategy.py
 
 会对展期收益窗口期和持有周期这两种超参进行网格搜索，并输出回测结果和回测样例
+
+### 文件说明
+**oringin目录**：未分类的合约表和目标策略的研报
+- future_candle_202207270909.rar：原始合约表
+- 20190517-天风证券-商品期货CTA专题报告
+
+**data目录**：
+- 子目录DOMI：不同类商品的主力合约
+- 子目录SEC：不同类商品的次主力合约
+- *_contract_code_and_exchange_id.csv：合约&交付日表
+
+**当前目录**：
+- Max_Drop.csv：最大回撤率
+- Revenue_Ratio.csv：年化收益率
+- Sharp_Ratio.csv：夏普比率
+- Trade_Num.csv：交易次数
+- example.csv：回撤样例
