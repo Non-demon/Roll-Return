@@ -39,4 +39,4 @@ python Strategy.py
 - Revenue_Ratio.csv：年化收益率
 - Sharp_Ratio.csv：夏普比率
 - Trade_Num.csv：交易次数
-- example.csv：回撤样例
+- example.csv：回测样例
